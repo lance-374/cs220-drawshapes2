@@ -257,7 +257,7 @@ public class DrawShapes extends JFrame
 				String text=e.getActionCommand();
                 System.out.println(text);
                 // change the color instance variable to red
-                color = Color.green;
+                color = Color.GREEN;
 			}
 		});
         
