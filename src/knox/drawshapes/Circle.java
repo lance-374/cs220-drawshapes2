@@ -28,13 +28,14 @@ public class Circle extends AbstractShape
     }
     
     public String toString() {
-        return String.format("CIRCLE %d %d %d %d %d %d %s", 
+        return String.format("CIRCLE %d %d %d %d %d %d %d %s", 
                 this.getAnchorPoint().x, 
                 this.getAnchorPoint().y,
                 this.diameter,
                 color.getRed(),
                 color.getGreen(),
                 color.getBlue(),
+                color.getAlpha(),
                 this.isSelected());
     }
 

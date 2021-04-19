@@ -16,13 +16,14 @@ public class Square extends Rectangle
     }
     
     public String toString() {
-        return String.format("SQUARE %d %d %d %d %d %d %s", 
+        return String.format("SQUARE %d %d %d %d %d %d %d %s", 
                 getAnchorPoint().x,
                 getAnchorPoint().y,
                 width,
                 color.getRed(),
                 color.getGreen(),
                 color.getBlue(),
+                color.getAlpha(),
                 selected);
     }
     

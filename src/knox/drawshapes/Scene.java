@@ -177,7 +177,7 @@ public class Scene implements Iterable<IShape>
                 int left = scan.nextInt();
                 int top = scan.nextInt();
                 int size = scan.nextInt();
-                Color color = new Color(scan.nextInt(),scan.nextInt(),scan.nextInt());
+                Color color = new Color(scan.nextInt(),scan.nextInt(),scan.nextInt(),scan.nextInt());
                 boolean selected = Boolean.parseBoolean(scan.next());
                 Square sq = new Square(color, left + size/2, top + size/2, size);
                 sq.setSelected(selected);

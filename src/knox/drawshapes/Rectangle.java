@@ -49,7 +49,7 @@ public class Rectangle extends AbstractShape
     }
     
     public String encode() {
-    	return String.format("RECTANGLE %d %d %d %d %d %d %d %s", 
+    	return String.format("RECTANGLE %d %d %d %d %d %d %d %d %s", 
                 getAnchorPoint().x,
                 getAnchorPoint().y,
                 width,
@@ -57,6 +57,7 @@ public class Rectangle extends AbstractShape
                 color.getRed(),
                 color.getGreen(),
                 color.getBlue(),
+                color.getAlpha(),
                 selected);
     }
     
