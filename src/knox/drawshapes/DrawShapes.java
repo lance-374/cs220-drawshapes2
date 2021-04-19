@@ -1,7 +1,11 @@
+//main is at bottom of this class
+
 package knox.drawshapes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,11 +20,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+//import javax.swing.UIManager;
+
 
 @SuppressWarnings("serial")
 public class DrawShapes extends JFrame
@@ -35,18 +45,24 @@ public class DrawShapes extends JFrame
     private Scene scene;
     private ShapeType shapeType = ShapeType.SQUARE;
     private Color color = Color.RED;
-    private Point startDrag;
+	//private Point startDrag;
+    private JFrame dimensionsPanel;
+    private JFrame colorPanel;
+    private int shapeWidth;
+    private int shapeHeight;
+    private static int numWindowsOpen=0;
 
 
-    public DrawShapes(int width, int height)
-    {
+    public DrawShapes(int width, int height) {
         setTitle("Draw Shapes!");
         scene=new Scene();
+        shapeWidth=100;
+        shapeHeight=200;
         
         // create our canvas, add to this frame's content pane
         shapePanel = new DrawShapesPanel(width,height,scene);
         this.getContentPane().add(shapePanel, BorderLayout.CENTER);
-        this.setResizable(false);
+        this.setResizable(true);
         this.pack();
         this.setLocation(100,100);
         
@@ -60,9 +76,112 @@ public class DrawShapes extends JFrame
         // Handle closing the window.
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                setVisible(false);
+                numWindowsOpen--;
+                if(numWindowsOpen==0) {
+                	System.exit(0);
+                }
             }
         });
+        
+        //create dimensions window
+        dimensionsPanel=new JFrame("Change Dimensions");
+        dimensionsPanel.setVisible(false);
+        dimensionsPanel.setLayout(new GridLayout(3,1));
+        JPanel labelPanel = new JPanel(new GridLayout());
+        JTextField widthField=new JTextField(10);
+        JTextField heightField=new JTextField(10);
+        labelPanel.add(new JLabel("Width"));
+        labelPanel.add(new JLabel("Height"));
+		dimensionsPanel.add(labelPanel);
+		JPanel textBoxesPanel = new JPanel(new FlowLayout());
+		textBoxesPanel.add(widthField);
+		textBoxesPanel.add(heightField);
+		dimensionsPanel.add(textBoxesPanel);
+		JPanel okDimPanel = new JPanel(new FlowLayout());
+		JButton okButton=new JButton("OK");
+		okDimPanel.add(okButton);
+		dimensionsPanel.add(okDimPanel);
+		okButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Integer.parseInt(widthField.getText());
+					Integer.parseInt(heightField.getText());
+					if(Integer.parseInt(widthField.getText())<=0 || Integer.parseInt(heightField.getText())<=0)
+						throw new NumberFormatException();
+				} catch (NumberFormatException ex) {
+					System.err.println("width and height fields must be positive ints");
+					return;
+				}
+				shapeWidth=Integer.parseInt(widthField.getText());
+				shapeHeight=Integer.parseInt(heightField.getText());
+				dimensionsPanel.setVisible(false);
+			}
+			
+		});
+		
+		dimensionsPanel.pack();
+        
+     // Handle closing the dimensions window.
+        dimensionsPanel.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+            	dimensionsPanel.setVisible(false);
+            }
+        });
+      //create dimensions window
+        colorPanel=new JFrame("Color Picker");
+        colorPanel.setVisible(false);
+        colorPanel.setLayout(new GridLayout(3,1));
+        JPanel colorLabelPanel = new JPanel(new GridLayout(1,3));
+        colorLabelPanel.add(new JLabel("Red"));
+        colorLabelPanel.add(new JLabel("Green"));
+        colorLabelPanel.add(new JLabel("Blue"));
+        colorPanel.add(colorLabelPanel);
+        JPanel colorTextBoxesPanel = new JPanel(new FlowLayout());
+        JTextField redField=new JTextField(10);
+        JTextField greenField=new JTextField(10);
+        JTextField blueField=new JTextField(10);
+        colorTextBoxesPanel.add(redField);
+        colorTextBoxesPanel.add(greenField);
+        colorTextBoxesPanel.add(blueField);
+        colorPanel.add(colorTextBoxesPanel);
+        JPanel okColorPanel = new JPanel(new FlowLayout());
+        JButton okColorButton=new JButton("OK");
+        okColorPanel.add(okColorButton);
+        okColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Integer.parseInt(redField.getText());
+					Integer.parseInt(greenField.getText());
+					Integer.parseInt(blueField.getText());
+				} catch (NumberFormatException ex) {
+					System.err.println("red, green, and blue fields must be ints");
+					return;
+				}
+				int red=Integer.parseInt(redField.getText());
+				if(red<0)
+					red=0;
+				if(red>255)
+					red=255;
+				int green=Integer.parseInt(greenField.getText());
+				if(green<0)
+					green=0;
+				if(green>255)
+					green=255;
+				int blue=Integer.parseInt(blueField.getText());
+				if(blue<0)
+					blue=0;
+				if(blue>255)
+					blue=255;
+				color=new Color(red,green,blue);
+				colorPanel.setVisible(false);
+			}
+			
+		});
+        colorPanel.add(okColorPanel);
+        colorPanel.pack();
     }
     
     private void initializeMouseListener()
@@ -78,17 +197,13 @@ public class DrawShapes extends JFrame
                         scene.addShape(new Square(color, 
                                 e.getX(), 
                                 e.getY(),
-                                100));
+                                shapeWidth));
                     } else if (shapeType == ShapeType.CIRCLE){
                         scene.addShape(new Circle(color,
                                 e.getPoint(),
-                                100));
+                                shapeWidth));
                     } else if (shapeType == ShapeType.RECTANGLE) {
-                        scene.addShape(new Rectangle(
-                                e.getPoint(),
-                                100, 
-                                200,
-                                color));
+                        scene.addShape(new Rectangle(e.getPoint(),shapeWidth,shapeHeight,color));
                     }
                     
                 } else if (e.getButton()==MouseEvent.BUTTON2) {
@@ -208,9 +323,19 @@ public class DrawShapes extends JFrame
                 }
             }
         });
+        // new
+        JMenuItem itemNew = new JMenuItem ("Open new window");
+        fileMenu.add(itemNew);
+        itemNew.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                newWindow();
+            }
+        });
         fileMenu.addSeparator();
-        // edit
-        JMenuItem itemExit = new JMenuItem ("Exit");
+        // close all windows
+        JMenuItem itemExit = new JMenuItem ("Close all windows");
         fileMenu.add(itemExit);
         itemExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -236,7 +361,18 @@ public class DrawShapes extends JFrame
 				String text=e.getActionCommand();
                 System.out.println(text);
                 // change the color instance variable to red
-                color = Color.RED;
+                color = new Color(255,0,0);
+			}
+		});
+        
+        // green color
+        addToMenu(colorMenu, "Green", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text=e.getActionCommand();
+                System.out.println(text);
+                // change the color instance variable to green
+                color = Color.GREEN;
 			}
 		});
         
@@ -250,14 +386,14 @@ public class DrawShapes extends JFrame
             }
         });
         
-        // green color
-        addToMenu(colorMenu, "Green", new ActionListener() {
+        // custom color
+        addToMenu(colorMenu, "Custom", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String text=e.getActionCommand();
                 System.out.println(text);
-                // change the color instance variable to red
-                color = Color.GREEN;
+                // open custom color chooser
+                colorPanel.setVisible(true);
 			}
 		});
         
@@ -280,6 +416,15 @@ public class DrawShapes extends JFrame
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Circle");
                 shapeType = ShapeType.CIRCLE;
+            }
+        });
+        
+        // rectangle
+        addToMenu(shapeMenu, "Rectangle", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Rectangle");
+                shapeType = ShapeType.RECTANGLE;
             }
         });
         
@@ -317,6 +462,14 @@ public class DrawShapes extends JFrame
             }
         });
         
+        // change dimensions option
+        addToMenu(operationModeMenu, "Change Dimensions", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                dimensionsPanel.setVisible(true);
+            }
+        });
 
         // set the menu bar for this frame
         this.setJMenuBar(menuBar);
@@ -368,6 +521,12 @@ public class DrawShapes extends JFrame
     {
         DrawShapes shapes=new DrawShapes(700, 600);
         shapes.setVisible(true);
+        numWindowsOpen++;
     }
-
+    
+    public static void newWindow() {
+    	DrawShapes shapes=new DrawShapes(700, 600);
+        shapes.setVisible(true);
+        numWindowsOpen++;
+    }
 }

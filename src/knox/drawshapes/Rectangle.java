@@ -37,22 +37,26 @@ public class Rectangle extends AbstractShape
     }
 
     public String toString() {
-        return String.format("RECTANGLE (%d, %d) width=%d height=%d color=%s selected? %s", 
+        return String.format("RECTANGLE %d %d %d %d %d %d %d %s", 
                 getAnchorPoint().x,
                 getAnchorPoint().y,
                 width,
                 height,
-                Util.colorToString(getColor()),
+                color.getRed(),
+                color.getGreen(),
+                color.getBlue(),
                 selected);
     }
     
     public String encode() {
-    	return String.format("RECTANGLE %d %d %d %d %s %s", 
+    	return String.format("RECTANGLE %d %d %d %d %d %d %d %s", 
                 getAnchorPoint().x,
                 getAnchorPoint().y,
                 width,
                 height,
-                Util.colorToString(getColor()),
+                color.getRed(),
+                color.getGreen(),
+                color.getBlue(),
                 selected);
     }
     

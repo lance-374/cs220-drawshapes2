@@ -177,7 +177,7 @@ public class Scene implements Iterable<IShape>
                 int left = scan.nextInt();
                 int top = scan.nextInt();
                 int size = scan.nextInt();
-                Color color = Util.stringToColor(scan.next());
+                Color color = new Color(scan.nextInt(),scan.nextInt(),scan.nextInt());
                 boolean selected = Boolean.parseBoolean(scan.next());
                 Square sq = new Square(color, left + size/2, top + size/2, size);
                 sq.setSelected(selected);
@@ -187,7 +187,7 @@ public class Scene implements Iterable<IShape>
                 int centerx = scan.nextInt();
                 int centery = scan.nextInt();
                 int diameter = scan.nextInt();
-                Color color = Util.stringToColor(scan.next());
+                Color color = new Color(scan.nextInt(),scan.nextInt(),scan.nextInt());
                 boolean selected = Boolean.parseBoolean(scan.next());
                 Circle circle = new Circle(color, new Point(centerx, centery), diameter);
                 circle.setSelected(selected);
@@ -198,7 +198,7 @@ public class Scene implements Iterable<IShape>
                 int top = scan.nextInt();
                 int width = scan.nextInt();
                 int height = scan.nextInt();
-                Color color = Util.stringToColor(scan.next());
+                Color color = new Color(scan.nextInt(),scan.nextInt(),scan.nextInt());
                 boolean selected = Boolean.parseBoolean(scan.next());
                 Rectangle rec = new Rectangle(new Point(left, top), width, height, color);
                 rec.setSelected(selected);
