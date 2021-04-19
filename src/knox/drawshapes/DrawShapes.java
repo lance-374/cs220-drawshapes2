@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,7 +48,6 @@ public class DrawShapes extends JFrame
     private Color color = Color.RED;
 	//private Point startDrag;
     private JFrame dimensionsPanel;
-    private JFrame colorPanel;
     private int shapeWidth;
     private int shapeHeight;
     private static int numWindowsOpen=0;
@@ -87,8 +87,11 @@ public class DrawShapes extends JFrame
         //create dimensions window
         dimensionsPanel=new JFrame("Change Dimensions");
         dimensionsPanel.setVisible(false);
-        dimensionsPanel.setLayout(new GridLayout(3,1));
-        JPanel labelPanel = new JPanel(new GridLayout());
+        dimensionsPanel.setLayout(new GridLayout(4,1));
+        JPanel textPanel=new JPanel(new FlowLayout());
+        textPanel.add(new JLabel("Height only affects rectangles. Width will be used as all four side lengths of a square and diameter of a circle."));
+        dimensionsPanel.add(textPanel);
+        JPanel labelPanel = new JPanel(new FlowLayout());
         JTextField widthField=new JTextField(10);
         JTextField heightField=new JTextField(10);
         labelPanel.add(new JLabel("Width"));
@@ -129,59 +132,6 @@ public class DrawShapes extends JFrame
             	dimensionsPanel.setVisible(false);
             }
         });
-      //create dimensions window
-        colorPanel=new JFrame("Color Picker");
-        colorPanel.setVisible(false);
-        colorPanel.setLayout(new GridLayout(3,1));
-        JPanel colorLabelPanel = new JPanel(new GridLayout(1,3));
-        colorLabelPanel.add(new JLabel("Red"));
-        colorLabelPanel.add(new JLabel("Green"));
-        colorLabelPanel.add(new JLabel("Blue"));
-        colorPanel.add(colorLabelPanel);
-        JPanel colorTextBoxesPanel = new JPanel(new FlowLayout());
-        JTextField redField=new JTextField(10);
-        JTextField greenField=new JTextField(10);
-        JTextField blueField=new JTextField(10);
-        colorTextBoxesPanel.add(redField);
-        colorTextBoxesPanel.add(greenField);
-        colorTextBoxesPanel.add(blueField);
-        colorPanel.add(colorTextBoxesPanel);
-        JPanel okColorPanel = new JPanel(new FlowLayout());
-        JButton okColorButton=new JButton("OK");
-        okColorPanel.add(okColorButton);
-        okColorButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					Integer.parseInt(redField.getText());
-					Integer.parseInt(greenField.getText());
-					Integer.parseInt(blueField.getText());
-				} catch (NumberFormatException ex) {
-					System.err.println("red, green, and blue fields must be ints");
-					return;
-				}
-				int red=Integer.parseInt(redField.getText());
-				if(red<0)
-					red=0;
-				if(red>255)
-					red=255;
-				int green=Integer.parseInt(greenField.getText());
-				if(green<0)
-					green=0;
-				if(green>255)
-					green=255;
-				int blue=Integer.parseInt(blueField.getText());
-				if(blue<0)
-					blue=0;
-				if(blue>255)
-					blue=255;
-				color=new Color(red,green,blue);
-				colorPanel.setVisible(false);
-			}
-			
-		});
-        colorPanel.add(okColorPanel);
-        colorPanel.pack();
     }
     
     private void initializeMouseListener()
@@ -393,7 +343,14 @@ public class DrawShapes extends JFrame
 				String text=e.getActionCommand();
                 System.out.println(text);
                 // open custom color chooser
-                colorPanel.setVisible(true);
+                Color prevColor=color;
+                color=JColorChooser.showDialog(
+                        DrawShapes.this,
+                        "Choose Color",
+                        color);
+                if(color==null) {
+                	color=prevColor;
+                }
 			}
 		});
         
